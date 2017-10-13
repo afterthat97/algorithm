@@ -22,6 +22,12 @@ int extgcd(int a, int b, int& x, int& y) {
 	}
 }
 
+ll inv(ll a, ll m) {
+	ll x, y;
+	extgcd(a, m, x, y);
+	return (m + x % m) % m;
+}
+
 int main() {
 	int a, b;
 	while (scanf("%d %d", &a, &b) == 2) {
