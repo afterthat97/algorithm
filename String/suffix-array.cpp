@@ -7,13 +7,6 @@ using namespace std;
 char str[maxn];
 int sa[maxn], rk[maxn], t2[maxn], c[maxn], lcp[maxn];
 
-void dump(int* arr, int n, string name) {
-	cout << "Dump array " << name << ":\n";
-	for (int i = 0; i < n; i++)
-		cout << arr[i] << ' ';
-	cout << endl << endl;
-}
-
 void build_sa(int m = maxn) {
 	int i, *x = rk, *y = t2, n = strlen(str);
 	memset(c, 0, sizeof c);
