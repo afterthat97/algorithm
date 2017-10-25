@@ -22,7 +22,10 @@ int kmp(char *t, char *p) {
 	for (int i = 0, j = 0; i < len;) {
 		while (~j && t[i] != p[j]) j = f[j];
 		i++; j++;
-		if (j == lenp) return i - j + 1;
+		if (j == lenp) {
+			return i - j;
+			// j = 0;
+		}
 	}
 	return -1;
 }

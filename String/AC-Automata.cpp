@@ -1,89 +1,85 @@
-//HDU 3065
 #include <iostream>
 #include <stdio.h>
 #include <cstring>
 #include <queue>
-#include <vector>
-#define maxn 10005
-#define maxl 55
-#define maxw 2000010
-#define maxnode maxn * maxl
-#define sigma_size 26
+#define maxn 1
+#define maxl 1000010
+#define maxw 1000010
+#define LETTER 26
 using namespace std;
 
-int size, trie[maxnode][sigma_size], f[maxnode], last[maxnode];
-vector<int> flag[maxnode];
-int num[maxnode];
-char p[maxn][maxl], t[maxw];
+struct node {
+	bool flag;
+	int num, fail, match, next[LETTER];
+}pool[maxn * maxl];
+
+node* const trie = pool + 1;
+int tsize, n;
+char w[maxw], t[maxl];
 
 inline void init() {
-    memset(num, 0, sizeof num);
-    memset(trie, 0, sizeof trie);
-    memset(last, 0, sizeof last);
-    for (int i = 0; i < maxnode; i++) flag[i].clear();
-    size = 0;
+	tsize = 0;
+	memset(pool, 0, 2 * sizeof(node));
+	trie[0].fail = -1;
 }
 
-inline int idx(char ch) { return ch - 'a'; }
+inline int convert(char ch) { return ch - 'a'; }
+inline char convert2(int x) { return x + 'a'; }
 
-inline void insert(char *s, int i) {
-    int p = 0, len = strlen(s);
-    for (int i = 0; i < len; i++) {
-        int c = idx(s[i]);
-        if (!trie[p][c]) trie[p][c] = ++size;
-        p = trie[p][c];
+inline void ins(const char *s) {
+	int cnt = 0;
+    for (int i = 0; s[i]; i++) {
+		int &pos = trie[cnt].next[convert(s[i])];
+		if (pos == 0) {
+			pos = ++tsize;
+			memset(&trie[tsize], 0, sizeof(node));
+		}
+		cnt = pos;
     }
-    flag[p].push_back(i);
+	++trie[cnt].num;
 }
 
-inline void find(char* t) {
-    int len = strlen(t);
-    for (int i = 0, j = 0; i < len; i++) {
-        int c = idx(t[i]);
-        if (c >= sigma_size || c < 0) { j = 0; continue; }
-        j = trie[j][c];
-        for (int tmp = j; tmp; tmp = last[tmp])
-            for (int t = 0; t < flag[tmp].size(); t++)
-                num[flag[tmp][t]]++;
-    }
+inline void build() {
+	queue<int> q; q.push(0);
+	while (!q.empty()) {
+		int cnt = q.front(); q.pop();
+		for (int i = 0; i < LETTER; i++) {
+			int &pos = trie[cnt].next[i];
+			if (pos) {
+				q.push(pos);
+				trie[pos].fail = trie[trie[cnt].fail].next[i];
+				trie[pos].match = trie[pos].num ? pos : trie[trie[pos].fail].match;
+			} else pos = trie[trie[cnt].fail].next[i];
+		}
+	}
 }
 
-void getf() {
-    queue<int> q;
-    memset(f, 0, sizeof f);
-    for (int c = 0; c < sigma_size; c++)
-        if (trie[0][c]) q.push(trie[0][c]);
-
-    while (!q.empty()) {
-        int now = q.front(); q.pop();
-        for (int c = 0; c < sigma_size; c++) {
-            int u = trie[now][c];
-            if (u == 0) { trie[now][c] = trie[f[now]][c]; continue; }
-            q.push(u);
-            int j = f[now];
-            while (j && trie[j][c] == 0) j = f[j];
-            f[u] = trie[j][c];
-			last[u] = flag[f[u]].size() ? f[u] : last[f[u]];
-        }
-    }
+inline int query(const char* s) {
+	int tot = 0, cnt = 0;
+	for (int i = 0; s[i]; i++) {
+		cnt = trie[cnt].next[convert(s[i])];
+		for (int tmp = trie[cnt].match; tmp;) {
+			//ans += trie[tmp].num;
+			if (trie[tmp].num && trie[tmp].flag == 0) {
+				trie[tmp].flag = 1;
+				++tot;
+			} else if (trie[tmp].flag) break;
+			tmp = trie[trie[tmp].fail].match;
+		}
+	}
+	return tot;
 }
 
 int main() {
-    int n, T; cin >> T;
-	while (T--) {
-		scanf("%d", &n);
+	while (scanf("%d", &n) == 1) {
         init();
-        for (int i = 1; i <= n; i++) {
-            scanf("%s", p[i]);
-            insert(p[i], i);
+        for (int i = 0; i < n; i++) {
+            scanf("%s", t);
+            ins(t);
         }
-        getf();
-        scanf("%s", t);
-        find(t);
-        int ans = 0;
-		for (int i = 1; i <= n; i++)
-            if (num[i] > 0) ans++;
-		printf("%d\n", ans);
+        scanf("%s", w);
+		build();
+		printf("%d\n", query(w));
     }
     return 0;
 }

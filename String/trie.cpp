@@ -1,56 +1,75 @@
-//LA 3942
 #include <stdio.h>
 #include <cstring>
 #include <iostream>
 #include <algorithm>
-#include <string>
-#include <math.h>
-#include <stdlib.h>
 #define maxn 4005
 #define maxl 105
-#define maxw 300005
+#define LETTER 26
 using namespace std;
 
-int size, trie[maxn * maxl][30], cnt[maxw];
-bool flag[maxn * maxl];
-char w[maxw];
+struct node {
+	int num, next[LETTER];
+}trie[maxn * maxl];
 
-void insert(char* s) {
-    int p = 0, len = strlen(s);
-    for (int i = 0; i < len; i++) {
-        int c = s[i] - 'a';
-        if (!trie[p][c])
-            trie[p][c] = ++size;
-        p = trie[p][c];
+int tsize;
+
+inline void init() {
+	tsize = 0;
+	memset(&trie[0], 0, sizeof(node));
+}
+
+inline int convert(char ch) {
+	return ch - 'a';
+}
+
+inline char convert2(int x) {
+	return x + 'a';
+}
+
+inline void ins(const char* s) {
+    int cnt = 0;
+    for (int i = 0; s[i]; i++) {
+		int &pos = trie[cnt].next[convert(s[i])];
+		if (pos == 0) {
+			pos = ++tsize;
+			memset(&trie[tsize], 0, sizeof(node));
+		}
+		cnt = pos;
     }
-    flag[p] = 1;
+	++trie[cnt].num;
+}
+
+inline int query(const char* s) {
+	int cnt = 0;
+	for (int i = 0; s[i]; i++) {
+		cnt = trie[cnt].next[convert(s[i])];
+		if (cnt == 0) return 0; // Not found
+	}
+	return trie[cnt].num;
+}
+
+inline void del(const char* s) {
+	int cnt = 0;
+	for (int i = 0; s[i]; i++)
+		cnt = trie[cnt].next[convert(s[i])];
+	--trie[cnt].num;
+}
+
+char str[maxl];
+
+void dfs(int cnt, int h) {
+	if (trie[cnt].num) {
+		str[h] = 0;
+		printf("%s: %d\n", str, trie[cnt].num);
+	}
+	for (int i = 0; i < LETTER; i++) {
+		if (trie[cnt].next[i]) {
+			str[h] = convert2(i);
+			dfs(trie[cnt].next[i], h + 1);
+		}
+	}
 }
 
 int main() {
-    int idx = 0;
-    while (scanf("%s", w) == 1) {
-        size = 0;
-        memset(trie, 0, sizeof trie);
-        memset(cnt, 0, sizeof cnt);
-        memset(flag, 0, sizeof flag);
-        int n; char s[maxl];
-        scanf("%d", &n);
-        for (int i = 0; i < n; i++) {
-            scanf("%s", s);
-            insert(s);
-        }
-        int len = strlen(w); cnt[len] = 1;
-        for (int i = len - 1; ~i; i--) {
-            int p = 0;
-            for (int j = i; j < len; j++) {
-                int c = w[j] - 'a';
-                if (!trie[p][c]) break;
-                p = trie[p][c];
-                if (flag[p])
-                    cnt[i] = (cnt[i] + cnt[j + 1]) % 20071027;
-            }
-        }
-        printf("Case %d: %d\n", ++idx, cnt[0]);
-    }
     return 0;
 }
