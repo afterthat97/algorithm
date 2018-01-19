@@ -52,7 +52,6 @@ int st_find(int begin, int end, int k) {//segment tree
 	return tmp[r];
 }
 
-
 //find: nlogn
 int qfind(int *begin, int *end, int k) {
     if (end - begin <= 1) return *begin;
@@ -68,6 +67,7 @@ int qfind(int *begin, int *end, int k) {
     else
         return qfind(i, end, k - (i - begin));
 }
+
 //find: nlogn
 int mid_qfind(int *begin, int *end, int k) {
     if (end - begin <= 1) return *begin;
