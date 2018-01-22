@@ -1,4 +1,3 @@
-//全排列，有重复，非递归版本
 #include <iostream>
 using namespace std;
 
@@ -21,8 +20,7 @@ inline bool get_next_permutation(int* a, int size) {
 }
 
 int main() {
-	int a[1005];
-	int size = 12;
+	int a[10], size = 5;
 	for (int i = 0; i < size; i++)
 		a[i] = i + 1;
 	do {

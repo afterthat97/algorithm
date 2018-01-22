@@ -1,7 +1,7 @@
 #include <iostream>
 using namespace std;
 
-int a[100], n£»
+int a[100], n;
 
 void permutation(int x) {
 	if (x == n - 1) {
@@ -21,7 +21,7 @@ void permutation(int x) {
 }
 
 int main() {
-	n = 12;
+	n = 4;
 	for (int i = 0; i < n; i++)
 		a[i] = i + 1;
 	permutation(0);
