@@ -20,7 +20,7 @@ inline bool get_next_permutation(int* a, int size) {
 }
 
 int main() {
-	int a[10], size = 5;
+	int a[10], size = 4;
 	for (int i = 0; i < size; i++)
 		a[i] = i + 1;
 	do {
