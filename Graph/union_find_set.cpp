@@ -12,10 +12,10 @@ void init() {
 }
 
 inline int getfa(int x) {
-	int fx = x, tmp;
+	int fx = x;
 	while (fx != par[fx]) fx = par[fx];
-	while (x != fx) {//compress condition
-		tmp = par[x];
+	while (x != fx) {
+		int tmp = par[x];
 		par[x] = fx;
 		x = tmp;
 	}
@@ -32,7 +32,6 @@ inline void combine(int x, int y) {
 }
 
 int main() {
-
 
 	return 0;
 }
